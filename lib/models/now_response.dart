@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final welcome = welcomeFromMap(jsonString);
+
 import 'dart:convert';
 
 class Memes {
@@ -5,21 +9,23 @@ class Memes {
     required this.id,
     required this.title,
     required this.active,
-    required this.attribs,
+    this.attribs,
+    this.idUser,
     required this.publishedAt,
     required this.createdAt,
     required this.updatedAt,
-    required this.imagen,
+    required this.image,
   });
 
   int id;
   String title;
-  bool active;
+  bool? active;
   dynamic attribs;
+  dynamic idUser;
   DateTime publishedAt;
   DateTime createdAt;
   DateTime updatedAt;
-  List<Imagen> imagen;
+  List<Imagen> image;
 
   factory Memes.fromJson(String str) => Memes.fromMap(json.decode(str));
 
@@ -30,10 +36,11 @@ class Memes {
         title: json["title"],
         active: json["active"],
         attribs: json["attribs"],
+        idUser: json["id_user"],
         publishedAt: DateTime.parse(json["published_at"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
-        imagen: List<Imagen>.from(json["image"].map((x) => Imagen.fromMap(x))),
+        image: List<Imagen>.from(json["image"].map((x) => Imagen.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -41,10 +48,11 @@ class Memes {
         "title": title,
         "active": active,
         "attribs": attribs,
+        "id_user": idUser,
         "published_at": publishedAt.toIso8601String(),
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
-        "image": List<dynamic>.from(imagen.map((x) => x.toMap())),
+        "image": List<dynamic>.from(image.map((x) => x.toMap())),
       };
 }
 
@@ -52,8 +60,8 @@ class Imagen {
   Imagen({
     required this.id,
     required this.name,
-    required this.alternativeText,
-    required this.caption,
+    this.alternativeText,
+    this.caption,
     required this.width,
     required this.height,
     required this.formats,
@@ -62,17 +70,17 @@ class Imagen {
     required this.mime,
     required this.size,
     required this.url,
-    required this.previewUrl,
+    this.previewUrl,
     required this.provider,
-    required this.providerMetadata,
+    this.providerMetadata,
     required this.createdAt,
     required this.updatedAt,
   });
 
   int id;
   String name;
-  String alternativeText;
-  String caption;
+  String? alternativeText;
+  String? caption;
   int width;
   int height;
   Formats formats;
@@ -139,29 +147,30 @@ class Formats {
     required this.small,
   });
 
-  Medium thumbnail;
-  Medium medium;
-  Medium small;
+  Thumbnail? thumbnail;
+  Thumbnail? medium;
+  Thumbnail? small;
 
   factory Formats.fromJson(String str) => Formats.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory Formats.fromMap(Map<String, dynamic> json) => Formats(
-        thumbnail: Medium.fromMap(json["thumbnail"]),
-        medium: Medium.fromMap(json["medium"]),
-        small: Medium.fromMap(json["small"]),
+        thumbnail: Thumbnail.fromMap(json["thumbnail"]),
+        medium:
+            json["medium"] == null ? null : Thumbnail.fromMap(json["medium"]),
+        small: json["small"] == null ? null : Thumbnail.fromMap(json["small"]),
       );
 
   Map<String, dynamic> toMap() => {
-        "thumbnail": thumbnail.toMap(),
-        "medium": medium.toMap(),
-        "small": small.toMap(),
+        "thumbnail": thumbnail!.toMap(),
+        "medium": medium == null ? null : medium!.toMap(),
+        "small": small == null ? null : small!.toMap(),
       };
 }
 
-class Medium {
-  Medium({
+class Thumbnail {
+  Thumbnail({
     required this.name,
     required this.hash,
     required this.ext,
@@ -169,7 +178,7 @@ class Medium {
     required this.width,
     required this.height,
     required this.size,
-    required this.path,
+    this.path,
     required this.url,
   });
 
@@ -183,11 +192,11 @@ class Medium {
   dynamic path;
   String url;
 
-  factory Medium.fromJson(String str) => Medium.fromMap(json.decode(str));
+  factory Thumbnail.fromJson(String str) => Thumbnail.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Medium.fromMap(Map<String, dynamic> json) => Medium(
+  factory Thumbnail.fromMap(Map<String, dynamic> json) => Thumbnail(
         name: json["name"],
         hash: json["hash"],
         ext: json["ext"],

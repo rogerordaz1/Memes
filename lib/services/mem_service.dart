@@ -23,7 +23,7 @@ class MemService extends ChangeNotifier {
     for (var i = 0; i < decodedResp.length; i++) {
       final Map<String, dynamic> resp = decodedResp[i];
       final respuesta = Memes.fromMap(resp);
-      ondisplay.addAll(respuesta.imagen);
+      ondisplay.addAll(respuesta.image);
     }
 
     print(ondisplay.length);
