@@ -5,6 +5,10 @@ import 'package:flutter/services.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:image_editor/image_editor.dart' as editor;
+
+import 'package:localizacionversion2/services/mem_service.dart';
+import 'package:provider/provider.dart';
 
 class SubirFoto extends StatefulWidget {
   const SubirFoto({Key? key}) : super(key: key);
@@ -62,6 +66,8 @@ class _SubirFotoState extends State<SubirFoto> {
 
   @override
   Widget build(BuildContext context) {
+    final memService = Provider.of<MemService>(context);
+
     return Scaffold(
       appBar: AppBar(
         actions: const [],
@@ -98,19 +104,53 @@ class _SubirFotoState extends State<SubirFoto> {
               height: 20,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.rotate_left_outlined)),
-                IconButton(
-                    onPressed: () => _cutImage(image),
-                    icon: const Icon(Icons.cut)),
-                IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.rotate_right_outlined)),
+                MaterialButton(
+                    color: Colors.blue,
+                    child: Text("Subir Meme"),
+                    onPressed: () => memService.subirMemes(image!.path)),
+                MaterialButton(
+                    color: Colors.blue,
+                    child: Text("Editar"),
+                    onPressed: () => _cutImage(image)),
+                MaterialButton(
+                    color: Colors.blue,
+                    child: Text("Add Texto"),
+                    onPressed: () {
+                      setState(() {
+                        final editorOption = editor.ImageEditorOption();
+
+                        editorOption
+                            .addOption(editor.FlipOption(horizontal: true));
+                        // and other option.
+
+                        final textOption = editor.AddTextOption();
+                        textOption.addText(
+                          editor.EditorText(
+                            offset: const Offset(0, 0),
+                            text: "Text",
+                          ),
+                        );
+                        editor.ImageEditor.editFileImage(
+                            file: image!, imageEditorOption: editorOption);
+                      });
+                    }),
               ],
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                MaterialButton(
+                    color: Colors.blue,
+                    child: Text("Descartar Cambios"),
+                    onPressed: () {
+                      setState(() {
+                        image = null;
+                      });
+                    }),
+              ],
+            )
           ],
         ),
       ),

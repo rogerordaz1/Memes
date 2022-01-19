@@ -28,4 +28,24 @@ class MemService extends ChangeNotifier {
 
     print(ondisplay.length);
   }
+
+  subirMemes(var path) async {
+    var headers = {
+      'Authorization':
+          'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjQyNjA2NjQ5LCJleHAiOjE2NDUxOTg2NDl9.4cl5y1L-c10BTsl3xf7DNoYpfmvCwZcakpO1h3a8qJ0'
+    };
+    var request = http.MultipartRequest(
+        'POST', Uri.parse('http://78.108.216.56:1338/memes'));
+    request.fields.addAll({'data': '{ }'});
+    request.files.add(await http.MultipartFile.fromPath('files.image', path));
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
 }
