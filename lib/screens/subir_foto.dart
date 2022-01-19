@@ -20,51 +20,45 @@ class _SubirFotoState extends State<SubirFoto> {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (image == null) return;
-
-      final imageTemporal = File(image.path);
-      setState(() {
-        this.image = imageTemporal;
-      });
+      _cutImage(File(image.path));
     } on PlatformException catch (e) {
       print('Fallo al cargar la imgen');
     }
   }
 
-  Future<void> _cropImage() async {
-    File? croppedFile = await ImageCropper.cropImage(
-        sourcePath: image!.path,
-        aspectRatioPresets: Platform.isAndroid
-            ? [
-                CropAspectRatioPreset.square,
-                CropAspectRatioPreset.ratio3x2,
-                CropAspectRatioPreset.original,
-                CropAspectRatioPreset.ratio4x3,
-                CropAspectRatioPreset.ratio16x9
-              ]
-            : [
-                CropAspectRatioPreset.original,
-                CropAspectRatioPreset.square,
-                CropAspectRatioPreset.ratio3x2,
-                CropAspectRatioPreset.ratio4x3,
-                CropAspectRatioPreset.ratio5x3,
-                CropAspectRatioPreset.ratio5x4,
-                CropAspectRatioPreset.ratio7x5,
-                CropAspectRatioPreset.ratio16x9
-              ],
+  _cutImage(imagen) async {
+    File? cortado = await ImageCropper.cropImage(
+        sourcePath: imagen.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ],
         androidUiSettings: const AndroidUiSettings(
-            toolbarTitle: 'Cropper',
+            toolbarTitle: 'Editar',
             toolbarColor: Colors.deepOrange,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
         iosUiSettings: const IOSUiSettings(
-          title: 'Cropper',
+          minimumAspectRatio: 1.0,
         ));
-    if (croppedFile != null) {
-      image = croppedFile;
-      setState(() {});
+
+    if (cortado != null) {
+      setState(() {
+        image = cortado;
+      });
     }
   }
+
+  // Future<void> cropImage(File image) async {
+  //   await ImageCropper.cropImage(
+  //       sourcePath: image.path,
+  //       aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+  //       aspectRatioPresets: [CropAspectRatioPreset.square]);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +104,8 @@ class _SubirFotoState extends State<SubirFoto> {
                     onPressed: () {},
                     icon: const Icon(Icons.rotate_left_outlined)),
                 IconButton(
-                    onPressed: () => _cropImage(), icon: const Icon(Icons.cut)),
+                    onPressed: () => _cutImage(image),
+                    icon: const Icon(Icons.cut)),
                 IconButton(
                     onPressed: () {},
                     icon: const Icon(Icons.rotate_right_outlined)),

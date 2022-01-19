@@ -18,7 +18,7 @@ class Memes {
   });
 
   int id;
-  String title;
+  String? title;
   bool? active;
   dynamic attribs;
   dynamic idUser;
