@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:localizacionversion2/screens/home.dart';
+import 'package:localizacionversion2/Login/login.dart';
 import 'package:localizacionversion2/screens/subir_foto.dart';
 import 'package:localizacionversion2/services/mem_service.dart';
 import 'package:provider/provider.dart';
 import 'providers/ui_provider.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(const Apptate());
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class Apptate extends StatelessWidget {
+  const Apptate({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => Uiprovaider()),
-        ChangeNotifierProvider(create: (_) => MemService()),
+        ChangeNotifierProvider(
+          create: (_) => MemService(),
+          lazy: false,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => Uiprovaider(),
+          lazy: false,
+        ),
       ],
       child: MaterialApp(
         title: 'Material App',
@@ -24,6 +31,8 @@ class MyApp extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           '/': (BuildContext context) => const HomePage(),
           'subir_foto': (BuildContext context) => const SubirFoto(),
+          'Login_page': (BuildContext context) => const LoginPage(),
+          'home': (BuildContext context) => const HomePage(),
         },
       ),
     );

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:localizacionversion2/providers/ui_provider.dart';
 import 'package:localizacionversion2/screens/principal.dart';
-import 'package:localizacionversion2/screens/subir_foto.dart';
 import 'package:localizacionversion2/screens/top_ten.dart';
-import 'package:localizacionversion2/services/mem_service.dart';
 import 'package:localizacionversion2/widgets/custom_navbar.dart';
 import 'package:provider/provider.dart';
 import 'favoritos.dart';
@@ -14,7 +12,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uprovaider = Provider.of<Uiprovaider>(context);
-    final memService = Provider.of<MemService>(context);
+    //final memService = Provider.of<MemService>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -132,10 +130,16 @@ class HomePage extends StatelessWidget {
                 const SizedBox(
                   width: 8,
                 ),
-                const Icon(
-                  Icons.supervised_user_circle,
-                  color: Colors.black,
-                  size: 35,
+                GestureDetector(
+                  child: const Icon(
+                    Icons.supervised_user_circle,
+                    color: Colors.black,
+                    size: 35,
+                  ),
+                  onTap: () {
+                    // Navigator.pop(context);
+                    Navigator.pushNamed(context, 'Login_page');
+                  },
                 ),
               ],
             ),
@@ -166,9 +170,8 @@ class _HomePageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uiprovaider = Provider.of<Uiprovaider>(context);
-    final indicador = uiprovaider.seleccionMenu;
 
-    switch (indicador) {
+    switch (uiprovaider.seleccionMenu) {
       case 0:
         return const Principal();
 
