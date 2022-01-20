@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_editor/image_editor.dart' as editor;
 
 import 'package:localizacionversion2/services/mem_service.dart';
@@ -24,7 +25,21 @@ class _SubirFotoState extends State<SubirFoto> {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (image == null) return;
-      _cutImage(File(image.path));
+      Future<File> testCompressAndGetFile(File file, String targetPath) async {
+        var result = await FlutterImageCompress.compressAndGetFile(
+          file.absolute.path,
+          targetPath,
+          quality: 95,
+        );
+        print(file.lengthSync());
+        print(result!.lengthSync().bitLength);
+        return result;
+      }
+
+      final pathfoto = image.path;
+      final imagenRecortada = await testCompressAndGetFile(
+          File(image.path), pathfoto + "local.jpg");
+      _cutImage(File(imagenRecortada.path));
     } on PlatformException catch (e) {
       print('Fallo al cargar la imgen');
     }
@@ -117,25 +132,7 @@ class _SubirFotoState extends State<SubirFoto> {
                 MaterialButton(
                     color: Colors.blue,
                     child: Text("Add Texto"),
-                    onPressed: () {
-                      setState(() {
-                        final editorOption = editor.ImageEditorOption();
-
-                        editorOption
-                            .addOption(editor.FlipOption(horizontal: true));
-                        // and other option.
-
-                        final textOption = editor.AddTextOption();
-                        textOption.addText(
-                          editor.EditorText(
-                            offset: const Offset(0, 0),
-                            text: "Text",
-                          ),
-                        );
-                        editor.ImageEditor.editFileImage(
-                            file: image!, imageEditorOption: editorOption);
-                      });
-                    }),
+                    onPressed: () => _addText(image!)),
               ],
             ),
             Row(
@@ -155,5 +152,19 @@ class _SubirFotoState extends State<SubirFoto> {
         ),
       ),
     );
+  }
+
+  _addText(File image) async {
+    File? newFoto = image;
+    final editorOption = editor.ImageEditorOption();
+
+    editorOption.addOption(editor.RotateOption(180));
+
+    newFoto = await editor.ImageEditor.editFileImageAndGetFile(
+        file: newFoto, imageEditorOption: editorOption);
+
+    setState(() {
+      image = newFoto!;
+    });
   }
 }

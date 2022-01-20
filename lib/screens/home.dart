@@ -12,7 +12,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uprovaider = Provider.of<Uiprovaider>(context);
-    //final memService = Provider.of<MemService>(context);
 
     return Scaffold(
       appBar: AppBar(

@@ -24,17 +24,26 @@ class Apptate extends StatelessWidget {
           lazy: false,
         ),
       ],
-      child: MaterialApp(
-        title: 'Material App',
-        debugShowCheckedModeBanner: false,
-        initialRoute: "/",
-        routes: <String, WidgetBuilder>{
-          '/': (BuildContext context) => const HomePage(),
-          'subir_foto': (BuildContext context) => const SubirFoto(),
-          'Login_page': (BuildContext context) => const LoginPage(),
-          'home': (BuildContext context) => const HomePage(),
-        },
-      ),
+      child: const MyApp(),
+    );
+  }
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Material App',
+      debugShowCheckedModeBanner: false,
+      initialRoute: "/",
+      routes: <String, WidgetBuilder>{
+        '/': (BuildContext context) => const HomePage(),
+        'subir_foto': (BuildContext context) => const SubirFoto(),
+        'Login_page': (BuildContext context) => const LoginPage(),
+        'home': (BuildContext context) => const HomePage(),
+      },
     );
   }
 }
