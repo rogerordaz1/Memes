@@ -11,6 +11,8 @@ class MemService extends ChangeNotifier {
 
   MemService() {
     getMemes();
+    print('Servicio inicializado');
+    print(ondisplay);
   }
 
   getMemes() async {
@@ -25,8 +27,7 @@ class MemService extends ChangeNotifier {
       final respuesta = Memes.fromMap(resp);
       ondisplay.addAll(respuesta.image);
     }
-
-    print(ondisplay.length);
+    notifyListeners();
   }
 
   subirMemes(var path) async {
@@ -47,5 +48,6 @@ class MemService extends ChangeNotifier {
     } else {
       print(response.reasonPhrase);
     }
+    notifyListeners();
   }
 }

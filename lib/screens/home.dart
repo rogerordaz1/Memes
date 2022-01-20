@@ -14,7 +14,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uprovaider = Provider.of<Uiprovaider>(context);
-    final memService = Provider.of<MemService>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -166,9 +165,8 @@ class _HomePageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uiprovaider = Provider.of<Uiprovaider>(context);
-    final indicador = uiprovaider.seleccionMenu;
 
-    switch (indicador) {
+    switch (uiprovaider.seleccionMenu) {
       case 0:
         return const Principal();
 

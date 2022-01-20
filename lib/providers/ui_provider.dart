@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 class Uiprovaider extends ChangeNotifier {
   int seleccionMenu = 0;
 
+  Uiprovaider() {
+    seleccionMenu = 0;
+  }
+
   int get selectOpcion {
     return seleccionMenu;
   }
