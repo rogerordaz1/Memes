@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:image_editor/image_editor.dart' as editor;
 
@@ -22,38 +21,25 @@ class SubirFoto extends StatefulWidget {
 }
 
 class _SubirFotoState extends State<SubirFoto> {
-  Timer? _timer;
   File? image;
   double progress = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    EasyLoading.addStatusCallback((status) {
-      print('EasyLoading Status $status');
-      if (status == EasyLoadingStatus.dismiss) {
-        _timer?.cancel();
-      }
-    });
-  }
-
   Future selectedImage() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (image == null) return;
-      // Future<File> testCompressAndGetFile(File file, String targetPath) async {
-      //   var result = await FlutterImageCompress.compressAndGetFile(
-      //     file.absolute.path,
-      //     targetPath,
-      //     quality: 95,
-      //   );
-      //   print(file.lengthSync());
-      //   print(result!.lengthSync().bitLength);
-      //   return result;
-      // }
+      //   Future<File> testCompressAndGetFile(File file, String targetPath) async {
+      //    var result = await FlutterImageCompress.compressAndGetFile(
+      //      file.absolute.path,
+      //      targetPath,
+      //       quality: 95,
+      //    );
+      //    print(file.lengthSync());
+      //    print(result!.lengthSync().bitLength);
+      //    return result;
+      //    }
 
-      final pathfoto = image.path;
-      // final imagenRecortada = await testCompressAndGetFile(
+      //  final pathfoto = image.path;
+      //  final imagenRecortada = await testCompressAndGetFile(
       //     File(image.path), pathfoto + "local.jpg");
       _cutImage(File(image.path));
     } on PlatformException catch (e) {
@@ -142,7 +128,7 @@ class _SubirFotoState extends State<SubirFoto> {
                     child: Text("Subir Meme"),
                     onPressed: () {
                       setState(() {
-                        subirMemes(image!);
+                        subirMemes(image!.path);
                       });
                     }),
                 MaterialButton(
@@ -168,50 +154,66 @@ class _SubirFotoState extends State<SubirFoto> {
                     }),
               ],
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 200,
+                  height: 20,
+                  child: LinearPercentIndicator(
+                    width: 140.0,
+                    lineHeight: 14.0,
+                    percent: progress,
+                    backgroundColor: Colors.grey,
+                    progressColor: Colors.blue,
+                  ),
+                ),
+                Text((progress * 100).toStringAsFixed(1)),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  subirMemes(File img) async {
+  subirMemes(var img) async {
     var headers = {
       'Authorization':
-          'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjQyNjA2NjQ5LCJleHAiOjE2NDUxOTg2NDl9.4cl5y1L-c10BTsl3xf7DNoYpfmvCwZcakpO1h3a8qJ0'
+          'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjQzMDMyNTM2LCJleHAiOjE2NDU2MjQ1MzZ9.7q3-7PjGWKnCbdZ8pDHYtg9uICixHIJtCTT1MwM0_8M'
     };
     var request = http.MultipartRequest(
         'POST', Uri.parse('http://78.108.216.56:1338/memes'));
     request.fields.addAll({'data': '{ }'});
-    request.files
-        .add(await http.MultipartFile.fromPath('files.image', img.path));
+    request.files.add(await http.MultipartFile.fromPath('files.image', img));
     request.headers.addAll(headers);
 
-    EasyLoading.show(status: 'Uploading...');
-    http.StreamedResponse response = await http.Client().send(request);
-
-    if (response.statusCode == 200) {
-      EasyLoading.showSuccess('Done!');
-      Navigator.pop(context);
-      EasyLoading.dismiss();
-      Navigator.pushNamed(context, 'home');
-    }
-
+    http.StreamedResponse response =
+        await request.send().whenComplete(() => null);
     final contentLength = response.contentLength;
+
     List bytes = <int>[];
-
     response.stream.listen((value) {
-      print(value);
       bytes.addAll(value);
-
       setState(() {
         progress = bytes.length / contentLength!;
-        print(contentLength);
-      });
-    }, onDone: () async {
-      setState(() {
-        progress = 1;
       });
     });
+    //http.StreamedResponse response = await http.Client().send(request);
+
+    // response.stream.listen((value) {
+    //   print(value);
+    //   bytes.addAll(value);
+
+    //   setState(() {
+    //     progress = bytes.length / contentLength!;
+    //     print(contentLength);
+    //   });
+    // }, onDone: () async {
+    //   setState(() {
+    //     progress = 1;
+    //   });
+    // });
   }
 
   _addText(File image) async {

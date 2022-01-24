@@ -1,9 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:like_button/like_button.dart';
 import 'package:localizacionversion2/models/now_response.dart';
-
-//paquete de descargar imagenes.
-import 'package:image_downloader/image_downloader.dart';
 
 class CustomCard extends StatelessWidget {
   final Imagen image;
@@ -62,10 +62,15 @@ class CustomCard extends StatelessWidget {
               ),
               LikeButton(
                 likeBuilder: (bool isLiked) {
-                  return Icon(
-                    Icons.downloading_sharp,
-                    color: isLiked ? Colors.deepPurpleAccent : Colors.grey,
-                    size: 30,
+                  return GestureDetector(
+                    child: Icon(
+                      Icons.downloading_sharp,
+                      color: isLiked ? Colors.deepPurpleAccent : Colors.grey,
+                      size: 30,
+                    ),
+                    onTap: () {
+                      _descargarimagen();
+                    },
                   );
                 },
                 animationDuration: const Duration(seconds: 0),
@@ -79,5 +84,11 @@ class CustomCard extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  _descargarimagen() async {
+    //
+    //    "http://78.108.216.56:1338/uploads/thumbnail_frame_902322f934.png"))
+    //
   }
 }
