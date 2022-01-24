@@ -5,8 +5,12 @@ import 'package:localizacionversion2/screens/subir_foto.dart';
 import 'package:localizacionversion2/services/mem_service.dart';
 import 'package:provider/provider.dart';
 import 'providers/ui_provider.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-void main() => runApp(const Apptate());
+void main() async {
+  configLoading();
+  runApp(const Apptate());
+}
 
 class Apptate extends StatelessWidget {
   const Apptate({Key? key}) : super(key: key);
@@ -44,6 +48,23 @@ class MyApp extends StatelessWidget {
         'Login_page': (BuildContext context) => const LoginPage(),
         'home': (BuildContext context) => const HomePage(),
       },
+      builder: EasyLoading.init(),
     );
   }
+}
+
+void configLoading() {
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.dualRing
+    ..loadingStyle = EasyLoadingStyle.light
+    ..indicatorSize = 25.0
+    ..radius = 10.0
+    ..progressColor = Colors.yellow
+    ..backgroundColor = Colors.red
+    ..indicatorColor = Colors.yellow
+    ..textColor = Colors.yellow
+    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..userInteractions = true
+    ..dismissOnTap = false;
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:image_editor/image_editor.dart' as editor;
 
@@ -20,8 +22,21 @@ class SubirFoto extends StatefulWidget {
 }
 
 class _SubirFotoState extends State<SubirFoto> {
+  Timer? _timer;
   File? image;
   double progress = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    EasyLoading.addStatusCallback((status) {
+      print('EasyLoading Status $status');
+      if (status == EasyLoadingStatus.dismiss) {
+        _timer?.cancel();
+      }
+    });
+  }
+
   Future selectedImage() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -188,26 +203,32 @@ class _SubirFotoState extends State<SubirFoto> {
         .add(await http.MultipartFile.fromPath('files.image', img.path));
     request.headers.addAll(headers);
 
+    EasyLoading.show(status: 'Uploading...');
     http.StreamedResponse response = await http.Client().send(request);
 
-    print(request.contentLength);
+    if (response.statusCode == 200) {
+      EasyLoading.showSuccess('Great Success!');
+      Navigator.pop(context);
+      EasyLoading.dismiss();
+      Navigator.pushNamed(context, 'home');
+    }
+
+    final contentLength = response.contentLength;
     List bytes = <int>[];
 
-    // final contentLength = response.contentLength;
+    response.stream.listen((value) {
+      print(value);
+      bytes.addAll(value);
 
-    // response.stream.listen((value) {
-    //   print(value);
-    //   bytes.addAll(value);
-
-    //   setState(() {
-    //     progress = bytes.length / contentLength!;
-    //     print(contentLength);
-    //   });
-    // }, onDone: () async {
-    //   setState(() {
-    //     progress = 1;
-    //   });
-    // });
+      setState(() {
+        progress = bytes.length / contentLength!;
+        print(contentLength);
+      });
+    }, onDone: () async {
+      setState(() {
+        progress = 1;
+      });
+    });
   }
 
   _addText(File image) async {
