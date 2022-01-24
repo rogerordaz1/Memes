@@ -5,6 +5,7 @@ class Uiprovaider extends ChangeNotifier {
 
   Uiprovaider() {
     seleccionMenu = 0;
+    notifyListeners();
   }
 
   int get selectOpcion {

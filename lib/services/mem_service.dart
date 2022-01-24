@@ -17,7 +17,7 @@ class MemService extends ChangeNotifier {
     print(ondisplay);
   }
 
-  getMemes() async {
+  Future<List<Imagen>> getMemes() async {
     final url = Uri.http(_baseUrl, '/memes');
 
     final response = await http.get(url);
@@ -29,6 +29,7 @@ class MemService extends ChangeNotifier {
       ondisplay.addAll(respuesta.image);
     }
     notifyListeners();
+    return ondisplay;
   }
 
   subirMemes(var path) async {

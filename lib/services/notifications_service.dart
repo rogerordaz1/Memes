@@ -11,6 +11,6 @@ class NotificationService {
       style: const TextStyle(color: Colors.white, fontSize: 20),
     ));
 
-    // messengerKey.currentState!.showSnackBar(snackBar);
+    messengerKey.currentState!.showSnackBar(snackBar);
   }
 }
