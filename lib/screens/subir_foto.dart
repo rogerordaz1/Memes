@@ -188,15 +188,11 @@ class _SubirFotoState extends State<SubirFoto> {
         .add(await http.MultipartFile.fromPath('files.image', img.path));
     request.headers.addAll(headers);
 
+    http.StreamedResponse response = await http.Client().send(request);
+
     print(request.contentLength);
     List bytes = <int>[];
-    request.finalize().listen((value) {
-      bytes.addAll(value);
-      setState(() {
-        progress = bytes.length / request.contentLength;
-      });
-    });
-    //http.StreamedResponse response = await http.Client().send(request);
+
     // final contentLength = response.contentLength;
 
     // response.stream.listen((value) {

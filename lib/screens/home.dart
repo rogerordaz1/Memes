@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:localizacionversion2/providers/ui_provider.dart';
 import 'package:localizacionversion2/screens/principal.dart';
 import 'package:localizacionversion2/screens/top_ten.dart';
+import 'package:localizacionversion2/services/mem_service.dart';
 import 'package:localizacionversion2/widgets/custom_navbar.dart';
 import 'package:provider/provider.dart';
 import 'favoritos.dart';
@@ -169,10 +170,16 @@ class _HomePageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uiprovaider = Provider.of<Uiprovaider>(context);
+    final memservice = Provider.of<MemService>(context);
 
     switch (uiprovaider.seleccionMenu) {
       case 0:
-        return const Principal();
+        return Principal(
+          load: () {
+            print("desde el home");
+            // memservice.getMemes();
+          },
+        );
 
       case 1:
         return const TopTen();
