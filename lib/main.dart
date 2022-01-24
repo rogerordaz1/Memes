@@ -55,15 +55,16 @@ class MyApp extends StatelessWidget {
 
 void configLoading() {
   EasyLoading.instance
+    ..toastPosition = EasyLoadingToastPosition.top
     ..displayDuration = const Duration(milliseconds: 2000)
     ..indicatorType = EasyLoadingIndicatorType.dualRing
-    ..loadingStyle = EasyLoadingStyle.light
+    ..loadingStyle = EasyLoadingStyle.custom
     ..indicatorSize = 25.0
     ..radius = 10.0
-    ..progressColor = Colors.yellow
-    ..backgroundColor = Colors.red
+    ..progressColor = Colors.yellow[200]
+    ..backgroundColor = Colors.white
     ..indicatorColor = Colors.yellow
-    ..textColor = Colors.yellow
+    ..textColor = Colors.green
     ..maskColor = Colors.blue.withOpacity(0.5)
     ..userInteractions = true
     ..dismissOnTap = false;

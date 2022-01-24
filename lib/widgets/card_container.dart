@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:localizacionversion2/models/now_response.dart';
 
+//paquete de descargar imagenes.
+import 'package:image_downloader/image_downloader.dart';
+
 class CustomCard extends StatelessWidget {
   final Imagen image;
 
@@ -59,7 +62,11 @@ class CustomCard extends StatelessWidget {
               ),
               LikeButton(
                 likeBuilder: (bool isLiked) {
-                  return const Icon(Icons.warning_amber_sharp);
+                  return Icon(
+                    Icons.downloading_sharp,
+                    color: isLiked ? Colors.deepPurpleAccent : Colors.grey,
+                    size: 30,
+                  );
                 },
                 animationDuration: const Duration(seconds: 0),
               )

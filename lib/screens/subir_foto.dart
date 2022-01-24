@@ -168,23 +168,6 @@ class _SubirFotoState extends State<SubirFoto> {
                     }),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 200,
-                  height: 20,
-                  child: LinearPercentIndicator(
-                    width: 140.0,
-                    lineHeight: 14.0,
-                    percent: progress,
-                    backgroundColor: Colors.grey,
-                    progressColor: Colors.blue,
-                  ),
-                ),
-                Text((progress * 100).toStringAsFixed(1)),
-              ],
-            ),
           ],
         ),
       ),
@@ -207,7 +190,7 @@ class _SubirFotoState extends State<SubirFoto> {
     http.StreamedResponse response = await http.Client().send(request);
 
     if (response.statusCode == 200) {
-      EasyLoading.showSuccess('Great Success!');
+      EasyLoading.showSuccess('Done!');
       Navigator.pop(context);
       EasyLoading.dismiss();
       Navigator.pushNamed(context, 'home');
