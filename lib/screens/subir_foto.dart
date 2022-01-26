@@ -197,21 +197,6 @@ class _SubirFotoState extends State<SubirFoto> {
         progress = bytes.length / contentLength!;
       });
     });
-    //http.StreamedResponse response = await http.Client().send(request);
-
-    // response.stream.listen((value) {
-    //   print(value);
-    //   bytes.addAll(value);
-
-    //   setState(() {
-    //     progress = bytes.length / contentLength!;
-    //     print(contentLength);
-    //   });
-    // }, onDone: () async {
-    //   setState(() {
-    //     progress = 1;
-    //   });
-    // });
   }
 
   _addText(File image) async {
