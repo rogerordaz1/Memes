@@ -16,7 +16,6 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.red),
         title: Text(
           uprovaider.devolverTitulo(),
           style: const TextStyle(color: Colors.black),
@@ -41,7 +40,7 @@ class HomePage extends StatelessWidget {
                         return AlertDialog(
                           title: const Center(child: Text('Add Meme')),
                           content: SizedBox(
-                            height: 130,
+                            height: 200,
                             width: 100,
                             child: ListView(
                               children: [
@@ -51,6 +50,7 @@ class HomePage extends StatelessWidget {
                                     Navigator.pushNamed(context, 'subir_foto');
                                   },
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Icon(
                                         Icons.add_a_photo,
@@ -62,6 +62,9 @@ class HomePage extends StatelessWidget {
                                       const Text('Subir foto'),
                                     ],
                                   ),
+                                ),
+                                const Divider(
+                                  color: Colors.black,
                                 ),
                                 const SizedBox(
                                   height: 10,
@@ -80,6 +83,9 @@ class HomePage extends StatelessWidget {
                                       const Text('Crear foto'),
                                     ],
                                   ),
+                                ),
+                                const Divider(
+                                  color: Colors.black,
                                 ),
                                 const SizedBox(
                                   height: 10,
@@ -100,6 +106,9 @@ class HomePage extends StatelessWidget {
                                       const Text('Donar'),
                                     ],
                                   ),
+                                ),
+                                const Divider(
+                                  color: Colors.black,
                                 ),
                                 const SizedBox(
                                   height: 10,
