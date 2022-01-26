@@ -1,15 +1,20 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:like_button/like_button.dart';
 import 'package:localizacionversion2/models/now_response.dart';
+import 'package:flutter/rendering.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 
-class CustomCard extends StatelessWidget {
+class CustomCard extends StatefulWidget {
   final Imagen image;
 
   const CustomCard({Key? key, required this.image}) : super(key: key);
 
+  @override
+  State<CustomCard> createState() => _CustomCardState();
+}
+
+class _CustomCardState extends State<CustomCard> {
+  bool color = false;
   @override
   Widget build(
     BuildContext context,
@@ -24,7 +29,7 @@ class CustomCard extends StatelessWidget {
             child: FadeInImage.assetNetwork(
               fit: BoxFit.fill,
               placeholder: 'assets/cargando.gif',
-              image: 'http://78.108.216.56:1338' + image.url,
+              image: 'http://78.108.216.56:1338' + widget.image.url,
             ),
           ),
         ),
@@ -65,11 +70,12 @@ class CustomCard extends StatelessWidget {
                   return GestureDetector(
                     child: Icon(
                       Icons.downloading_sharp,
-                      color: isLiked ? Colors.deepPurpleAccent : Colors.grey,
+                      color: color ? Colors.blue : Colors.grey,
                       size: 30,
                     ),
                     onTap: () {
-                      _descargarimagen();
+                      var http = 'http://78.108.216.56:1338' + widget.image.url;
+                      _saveNetworkImage(http);
                     },
                   );
                 },
@@ -86,9 +92,12 @@ class CustomCard extends StatelessWidget {
     );
   }
 
-  _descargarimagen() async {
-    //
-    //    "http://78.108.216.56:1338/uploads/thumbnail_frame_902322f934.png"))
-    //
+  void _saveNetworkImage(var http) async {
+    String path = http;
+    GallerySaver.saveImage(path, albumName: 'Memeland Albun').then((success) {
+      setState(() {
+        color = true;
+      });
+    });
   }
 }

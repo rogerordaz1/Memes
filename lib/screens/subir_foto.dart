@@ -1,12 +1,10 @@
 import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:image_editor/image_editor.dart' as editor;
 
