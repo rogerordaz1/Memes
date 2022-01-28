@@ -33,8 +33,7 @@ class _CustomCardState extends State<CustomCard> {
             ),
           ),
         ),
-        // ignore: sized_box_for_whitespace
-        Container(
+        SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.08,
           child: Row(

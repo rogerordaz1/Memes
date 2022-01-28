@@ -7,14 +7,14 @@ import 'package:localizacionversion2/widgets/memscontainer.dart';
 import 'package:localizacionversion2/widgets/auth_background.dart';
 import 'package:provider/provider.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => LoginPageState();
+  State<RegisterPage> createState() => RegisterPageState();
 }
 
-class LoginPageState extends State<LoginPage> {
+class RegisterPageState extends State<RegisterPage> {
   bool isHidden = true;
   bool controlcmail = false;
   bool controlcontrsena = false;
@@ -120,14 +120,12 @@ class _LoginFormState extends State<_LoginForm> {
         Container(
           margin: const EdgeInsets.only(top: 30),
           child: const Text(
-            "Registrate en Memeland",
-            style: TextStyle(fontSize: 18),
+            "Register",
+            style: TextStyle(fontSize: 25),
           ),
         ),
-        Container(
-          margin: const EdgeInsets.only(bottom: 30, left: 25),
-          child: const Text(
-              'Registrate en nuestra red social para subir contenido y compartirlo con tus amigos'),
+        const SizedBox(
+          height: 35,
         ),
         Form(
             key: loginForm.formKey,
@@ -219,6 +217,35 @@ class _LoginFormState extends State<_LoginForm> {
                   ),
                 ),
                 const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  decoration: const BoxDecoration(
+                      color: Color.fromRGBO(255, 255, 255, 1),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                  child: TextFormField(
+                    style: const TextStyle(
+                      color: Colors.black,
+                    ),
+                    onChanged: (value) => loginForm.username = value,
+                    keyboardType: TextInputType.text,
+                    decoration: const InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                      hintText: 'John Doe',
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      labelText: 'Username',
+                      labelStyle: TextStyle(color: Colors.grey),
+                      prefixIcon: Icon(
+                        Icons.lock_outline,
+                        color: Color.fromRGBO(93, 96, 239, 1),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
                   height: 35,
                 ),
                 Row(
@@ -257,8 +284,8 @@ class _LoginFormState extends State<_LoginForm> {
                           } else {
                             try {
                               final String? errorMesage = await authService
-                                  .loginUser(
-                                      loginForm.email, loginForm.password)
+                                  .register(loginForm.username, loginForm.email,
+                                      loginForm.password)
                                   .timeout(
                                 const Duration(seconds: 10),
                                 onTimeout: () {
@@ -273,10 +300,7 @@ class _LoginFormState extends State<_LoginForm> {
                                     context, errorMesage);
                                 Navigator.pop(context);
                               } else {
-                                if (authService.navegar == true) {
-                                  Navigator.pushReplacementNamed(
-                                      context, 'home');
-                                }
+                                Navigator.pushReplacementNamed(context, 'home');
                               }
                             } catch (e) {
                               Navigator.pop(context);
@@ -294,14 +318,14 @@ class _LoginFormState extends State<_LoginForm> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      "Don't have an account?",
+                      "If you have an account",
                       style: TextStyle(color: Colors.black),
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, 'register_page');
+                        Navigator.pop(context);
                       },
-                      child: const Text(" Register",
+                      child: const Text(" Login",
                           style:
                               TextStyle(color: Color.fromRGBO(93, 96, 239, 1))),
                     ),

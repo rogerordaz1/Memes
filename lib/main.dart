@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:localizacionversion2/Login/register.dart';
+import 'package:localizacionversion2/providers/login_users_provider.dart';
 import 'package:localizacionversion2/screens/home.dart';
 import 'package:localizacionversion2/Login/login.dart';
 import 'package:localizacionversion2/screens/subir_foto.dart';
@@ -27,6 +29,10 @@ class Apptate extends StatelessWidget {
           create: (_) => Uiprovaider(),
           lazy: false,
         ),
+        ChangeNotifierProvider(
+          create: (_) => LoginUsersPoriver(),
+          lazy: false,
+        ),
       ],
       child: const MyApp(),
     );
@@ -46,6 +52,7 @@ class MyApp extends StatelessWidget {
         '/': (BuildContext context) => const HomePage(),
         'subir_foto': (BuildContext context) => const SubirFoto(),
         'Login_page': (BuildContext context) => const LoginPage(),
+        'register_page': (BuildContext context) => const RegisterPage(),
         'home': (BuildContext context) => const HomePage(),
       },
       builder: EasyLoading.init(),

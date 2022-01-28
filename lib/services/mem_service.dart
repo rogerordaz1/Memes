@@ -52,42 +52,4 @@ class MemService extends ChangeNotifier {
       //  print(response.reasonPhrase);
     }
   }
-
-  Future<String?> loginUser(String correo, String password) async {
-    final Map<String, dynamic> authData = {
-      "identifier": correo,
-      "password": password,
-    };
-
-    final url = Uri.http(_baseUrl, '/auth/local');
-
-    final response = await http.post(url, body: {
-      'identifier': authData['identifier'],
-      'password': authData['password']
-    });
-
-    if (response.statusCode == 200) {
-      navegar = true;
-    }
-
-    final Map<String, dynamic> decodedResp = json.decode(response.body);
-
-    if (decodedResp.containsKey('jwt')) {
-      await storage.write(key: 'token', value: decodedResp['jwt']);
-      return null;
-    } else {
-      return 'Usuario o Contraseña mal escrita.';
-    }
-
-    //  print(x);
-  }
-
-  Future<String> readToken() async {
-    return await storage.read(key: 'token') ?? '';
-  }
-
-  Future<void> logout() async {
-    await storage.delete(key: 'token');
-    notifyListeners();
-  }
 }
