@@ -278,8 +278,6 @@ class _LoginFormState extends State<_LoginForm> {
                                       context, 'home');
                                 }
                               }
-                              String a = await authService.readToken();
-                              print(a);
                             } catch (e) {
                               Navigator.pop(context);
                               NotificationService.showSnackBar(

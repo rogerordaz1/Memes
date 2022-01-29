@@ -16,9 +16,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isHidden = false;
-  String token = '';
-
+  late bool logueado;
+  String? datos;
   @override
   void initState() {
     super.initState();
@@ -30,7 +29,7 @@ class _HomePageState extends State<HomePage> {
     final uprovaider = Provider.of<Uiprovaider>(context);
 
     setState(() {
-      isHidden = loginUser.valortoken;
+      logueado = loginUser.logueado;
     });
 
     return Scaffold(
@@ -53,106 +52,7 @@ class _HomePageState extends State<HomePage> {
                     size: 35,
                   ),
                   onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Center(child: Text('Add Meme')),
-                          content: SizedBox(
-                            height: 200,
-                            width: 100,
-                            child: ListView(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    Navigator.pushNamed(context, 'subir_foto');
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Icon(
-                                        Icons.add_a_photo,
-                                        color: Colors.blue[200],
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      const Text('Subir foto'),
-                                    ],
-                                  ),
-                                ),
-                                const Divider(
-                                  color: Colors.black,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.add_circle,
-                                        color: Colors.blue[200],
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      const Text('Crear foto'),
-                                    ],
-                                  ),
-                                ),
-                                const Divider(
-                                  color: Colors.black,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    print('has tocado el menu');
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.coffee,
-                                        color: Colors.blue[200],
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      const Text('Donar'),
-                                    ],
-                                  ),
-                                ),
-                                const Divider(
-                                  color: Colors.black,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.settings,
-                                        color: Colors.blue[200],
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      const Text('Ajustes'),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
+                    _showdialog();
                   },
                 ),
                 const SizedBox(
@@ -160,10 +60,11 @@ class _HomePageState extends State<HomePage> {
                 ),
                 GestureDetector(
                   child: FutureBuilder(
-                    future: loginUser.readToken(),
+                    future: loginUser.readDataFromStorage('token'),
                     builder:
                         (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      if (snapshot.data == "") {
+                      datos = snapshot.data;
+                      if (snapshot.data == "" || snapshot.hasData == false) {
                         return const Icon(
                           Icons.supervised_user_circle,
                           color: Colors.black,
@@ -176,9 +77,11 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   onTap: () {
-                    isHidden
-                        ? loginUser.logout()
-                        : Navigator.pushReplacementNamed(context, 'Login_page');
+                    if (datos != "") {
+                      loginUser.logout();
+                    } else {
+                      Navigator.pushReplacementNamed(context, 'Login_page');
+                    }
                   },
                 ),
               ],
@@ -200,6 +103,126 @@ class _HomePageState extends State<HomePage> {
       ),
       body: const _HomePageBody(),
       bottomNavigationBar: const NavBar(),
+    );
+  }
+
+  _showdialog() {
+    final loginUser = Provider.of<LoginUsersPoriver>(context, listen: false);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: (datos != "")
+              ? const Center(child: Text('Add Meme'))
+              : const Center(child: Text('Log in for use the options')),
+          content: SizedBox(
+            height: 200,
+            width: 100,
+            child: FutureBuilder(
+              future: loginUser.readDataFromStorage('token'),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.data == "" || snapshot.hasData == false) {
+                  return listViewOptions(Colors.grey, datos);
+                } else {
+                  return listViewOptions(Colors.blue[200]!, datos);
+                }
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget listViewOptions(Color color, String? datos) {
+    return ListView(
+      children: [
+        GestureDetector(
+          onTap: () {
+            if (datos != "") {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, 'subir_foto');
+            }
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(Icons.add_a_photo, color: color),
+              const SizedBox(
+                width: 10,
+              ),
+              const Text('Subir foto'),
+            ],
+          ),
+        ),
+        const Divider(
+          color: Colors.black,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        GestureDetector(
+          onTap: () {
+            if (datos != "") {
+              //TODO:Here Put Code;
+            }
+          },
+          child: Row(
+            children: [
+              Icon(Icons.add_circle, color: color),
+              const SizedBox(
+                width: 10,
+              ),
+              const Text('Crear foto'),
+            ],
+          ),
+        ),
+        const Divider(
+          color: Colors.black,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        GestureDetector(
+          onTap: () {
+            if (datos != "") {
+              //TODO:Here Put Code;
+              print('has tocado el menu');
+            }
+          },
+          child: Row(
+            children: [
+              Icon(Icons.coffee, color: color),
+              const SizedBox(
+                width: 10,
+              ),
+              const Text('Donar'),
+            ],
+          ),
+        ),
+        const Divider(
+          color: Colors.black,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        GestureDetector(
+          onTap: () {
+            if (datos != "") {
+              //TODO:Here Put Code;
+            }
+          },
+          child: Row(
+            children: [
+              Icon(Icons.settings, color: color),
+              const SizedBox(
+                width: 10,
+              ),
+              const Text('Ajustes'),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

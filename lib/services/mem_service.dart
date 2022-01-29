@@ -1,8 +1,12 @@
 import 'dart:convert';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:localizacionversion2/models/now_response.dart';
+import 'package:localizacionversion2/providers/login_form_provider.dart';
+import 'package:localizacionversion2/providers/login_users_provider.dart';
+import 'package:provider/provider.dart';
 
 class MemService extends ChangeNotifier {
   final String _baseUrl = "78.108.216.56:1338";
@@ -26,6 +30,8 @@ class MemService extends ChangeNotifier {
     for (var i = 0; i < decodedResp.length; i++) {
       final Map<String, dynamic> resp = decodedResp[i];
       final respuesta = Memes.fromMap(resp);
+
+      print(respuesta.idUser['username']);
       ondisplay = [...ondisplay, ...respuesta.image];
     }
 
@@ -33,23 +39,29 @@ class MemService extends ChangeNotifier {
     return ondisplay;
   }
 
-  subirMemes(var path) async {
-    var headers = {
-      'Authorization':
-          'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjQyNjA2NjQ5LCJleHAiOjE2NDUxOTg2NDl9.4cl5y1L-c10BTsl3xf7DNoYpfmvCwZcakpO1h3a8qJ0'
-    };
+  subirMemes(var img, BuildContext context) async {
+    final authService = Provider.of<LoginUsersPoriver>(context, listen: false);
+    String id = await authService.readDataFromStorage('id_user');
+    String jwt = await authService.readDataFromStorage('token');
+    int iduser = int.parse(id);
+
+    var headers = {'Authorization': 'bearer $jwt'};
     var request = http.MultipartRequest(
         'POST', Uri.parse('http://78.108.216.56:1338/memes'));
-    request.fields.addAll({'data': '{ }'});
-    request.files.add(await http.MultipartFile.fromPath('files.image', path));
+    request.fields.addAll({'data': '{ "title":"adonys","id_user": "$iduser"}'});
+    request.files.add(await http.MultipartFile.fromPath('files.image', img));
     request.headers.addAll(headers);
 
-    http.StreamedResponse response = await request.send();
+    EasyLoading.show(status: 'Uploading...');
+    http.StreamedResponse response = await http.Client().send(request);
 
     if (response.statusCode == 200) {
-      //   print(await response.stream.bytesToString());
+      EasyLoading.showSuccess('Done!');
+      Navigator.pop(context);
+      EasyLoading.dismiss();
+      Navigator.pushNamed(context, 'home');
     } else {
-      //  print(response.reasonPhrase);
+      print("error al subir imagen");
     }
   }
 }
