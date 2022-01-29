@@ -294,13 +294,16 @@ class _LoginFormState extends State<_LoginForm> {
                                       context, "No hay conexion con el API");
                                 },
                               );
-
-                              if (!(errorMesage == null)) {
-                                NotificationService.showSnackBar(
-                                    context, errorMesage);
+                              print(errorMesage);
+                              if (errorMesage ==
+                                  "Correo o nombre de usuario en uso") {
+                                NotificationService.showSnackBar(context,
+                                    "Correo o nombre de usuario en uso");
                                 Navigator.pop(context);
-                              } else {
-                                Navigator.pushReplacementNamed(context, 'home');
+                              }
+                              if (errorMesage == "creado correctamente") {
+                                Navigator.pushReplacementNamed(
+                                    context, 'Login_page');
                               }
                             } catch (e) {
                               Navigator.pop(context);

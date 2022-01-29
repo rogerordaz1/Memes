@@ -10,6 +10,8 @@ class LoginUsersPoriver extends ChangeNotifier {
 
   final String _baseUrl = "78.108.216.56:1338";
 
+  bool valortoken = false;
+
   Future<String?> loginUser(String correo, String password) async {
     final Map<String, dynamic> authData = {
       "identifier": correo,
@@ -31,6 +33,7 @@ class LoginUsersPoriver extends ChangeNotifier {
 
     if (decodedResp.containsKey('jwt')) {
       await storage.write(key: 'token', value: decodedResp['jwt']);
+      actualizarIcon();
       return null;
     } else {
       return 'Usuario o Contraseña mal escrita.';
@@ -52,8 +55,10 @@ class LoginUsersPoriver extends ChangeNotifier {
 
     if (response.statusCode == 200) {
       print(await response.stream.bytesToString());
-    } else {
+      return "creado correctamente";
+    } else if (response.statusCode == 400) {
       print(response.reasonPhrase);
+      return "Correo o nombre de usuario en uso";
     }
   }
 
@@ -63,6 +68,16 @@ class LoginUsersPoriver extends ChangeNotifier {
 
   Future<void> logout() async {
     await storage.delete(key: 'token');
+    valortoken = false;
     notifyListeners();
+  }
+
+  Future<bool> actualizarIcon() async {
+    String token = await readToken();
+    if (token != '') {
+      valortoken = true;
+    }
+
+    return valortoken;
   }
 }

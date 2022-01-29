@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localizacionversion2/providers/login_users_provider.dart';
 import 'package:localizacionversion2/providers/ui_provider.dart';
 import 'package:localizacionversion2/screens/principal.dart';
 import 'package:localizacionversion2/screens/top_ten.dart';
@@ -7,12 +8,30 @@ import 'package:localizacionversion2/widgets/custom_navbar.dart';
 import 'package:provider/provider.dart';
 import 'favoritos.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool isHidden = false;
+  String token = '';
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final loginUser = Provider.of<LoginUsersPoriver>(context);
     final uprovaider = Provider.of<Uiprovaider>(context);
+
+    setState(() {
+      isHidden = loginUser.valortoken;
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -140,14 +159,26 @@ class HomePage extends StatelessWidget {
                   width: 8,
                 ),
                 GestureDetector(
-                  child: const Icon(
-                    Icons.supervised_user_circle,
-                    color: Colors.black,
-                    size: 35,
+                  child: FutureBuilder(
+                    future: loginUser.readToken(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.data == "") {
+                        return const Icon(
+                          Icons.supervised_user_circle,
+                          color: Colors.black,
+                          size: 35,
+                        );
+                      } else {
+                        return const Icon(Icons.logout_rounded,
+                            color: Colors.black, size: 35);
+                      }
+                    },
                   ),
                   onTap: () {
-                    // Navigator.pop(context);
-                    Navigator.pushNamed(context, 'Login_page');
+                    isHidden
+                        ? loginUser.logout()
+                        : Navigator.pushReplacementNamed(context, 'Login_page');
                   },
                 ),
               ],
