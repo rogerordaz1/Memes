@@ -4,7 +4,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:localizacionversion2/models/now_response.dart';
-import 'package:localizacionversion2/providers/login_form_provider.dart';
 import 'package:localizacionversion2/providers/login_users_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -12,8 +11,12 @@ class MemService extends ChangeNotifier {
   final String _baseUrl = "78.108.216.56:1338";
   final String apiToken = "";
   List<Imagen> ondisplay = [];
+  List<User> user = [];
+  List<int> idmeme = [];
+  List<int> likes = [];
   final storage = const FlutterSecureStorage();
   bool navegar = false;
+  bool isliked = false;
 
   MemService() {
     getMemes();
@@ -21,18 +24,32 @@ class MemService extends ChangeNotifier {
     print(ondisplay);
   }
 
-  Future<List<Imagen>> getMemes() async {
+  Future<List> getResponse() async {
     final url = Uri.http(_baseUrl, '/memes');
-
     final response = await http.get(url);
-
     final List<dynamic> decodedResp = json.decode(response.body);
+    return decodedResp;
+  }
+
+  Future<List<Imagen>> getMemes() async {
+    List<dynamic> decodedResp = await getResponse();
     for (var i = 0; i < decodedResp.length; i++) {
       final Map<String, dynamic> resp = decodedResp[i];
       final respuesta = Memes.fromMap(resp);
 
-      print(respuesta.idUser['username']);
+      //print(respuesta.idUser.username);
       ondisplay = [...ondisplay, ...respuesta.image];
+      user = [...user, respuesta.idUser];
+      // likes[i] = respuesta.likees;
+      print(respuesta.likees.length);
+      likes = [...likes, respuesta.likees.length];
+      idmeme = [...idmeme, respuesta.id];
+      print('Este es el id del meme' + idmeme[i].toString());
+      print(likes[i]);
+      print(user[i].username);
+      print(user[i].id);
+      print("La longitud de la lista de likes" +
+          respuesta.likees.length.toString());
     }
 
     notifyListeners();
@@ -63,5 +80,19 @@ class MemService extends ChangeNotifier {
     } else {
       print("error al subir imagen");
     }
+  }
+
+  Future<bool> verificarLiked(int id) async {
+    List<dynamic> decodedResp = await getResponse();
+    for (var i = 0; i < decodedResp.length; i++) {
+      final Map<String, dynamic> resp = decodedResp[i];
+      final respuesta = Memes.fromMap(resp);
+      for (var j = 0; j < respuesta.likees.length; j++) {
+        if (id == respuesta.likees[j].id) {
+          isliked = true;
+        }
+      }
+    }
+    return isliked;
   }
 }

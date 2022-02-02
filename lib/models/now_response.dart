@@ -7,25 +7,27 @@ import 'dart:convert';
 class Memes {
   Memes({
     required this.id,
-    required this.title,
-    required this.active,
+    this.title,
+    this.active,
     this.attribs,
-    this.idUser,
+    required this.idUser,
     required this.publishedAt,
     required this.createdAt,
     required this.updatedAt,
     required this.image,
+    required this.likees,
   });
 
   int id;
   String? title;
-  bool? active;
+  dynamic active;
   dynamic attribs;
-  dynamic idUser;
+  User idUser;
   DateTime publishedAt;
   DateTime createdAt;
   DateTime updatedAt;
   List<Imagen> image;
+  List<Likee> likees;
 
   factory Memes.fromJson(String str) => Memes.fromMap(json.decode(str));
 
@@ -36,11 +38,12 @@ class Memes {
         title: json["title"],
         active: json["active"],
         attribs: json["attribs"],
-        idUser: json["id_user"],
+        idUser: User.fromMap(json["id_user"]),
         publishedAt: DateTime.parse(json["published_at"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         image: List<Imagen>.from(json["image"].map((x) => Imagen.fromMap(x))),
+        likees: List<Likee>.from(json["likees"].map((x) => Likee.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -48,11 +51,72 @@ class Memes {
         "title": title,
         "active": active,
         "attribs": attribs,
-        "id_user": idUser,
+        "id_user": idUser.toMap(),
         "published_at": publishedAt.toIso8601String(),
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         "image": List<dynamic>.from(image.map((x) => x.toMap())),
+        "likees": List<dynamic>.from(likees.map((x) => x.toMap())),
+      };
+}
+
+class User {
+  User({
+    required this.id,
+    required this.username,
+    required this.email,
+    required this.provider,
+    required this.confirmed,
+    required this.blocked,
+    required this.role,
+    required this.facebook,
+    required this.instagram,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  int id;
+  String username;
+  String email;
+  String? provider;
+  bool confirmed;
+  dynamic blocked;
+  int? role;
+  dynamic facebook;
+  dynamic instagram;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  factory User.fromJson(String str) => User.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory User.fromMap(Map<String, dynamic> json) => User(
+        id: json["id"],
+        username: json["username"],
+        email: json["email"],
+        provider: json["provider"],
+        confirmed: json["confirmed"],
+        blocked: json["blocked"],
+        role: json["role"],
+        facebook: json["facebook"],
+        instagram: json["instagram"],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
+
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "username": username,
+        "email": email,
+        "provider": provider,
+        "confirmed": confirmed,
+        "blocked": blocked,
+        "role": role,
+        "facebook": facebook,
+        "instagram": instagram,
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
       };
 }
 
@@ -60,8 +124,8 @@ class Imagen {
   Imagen({
     required this.id,
     required this.name,
-    this.alternativeText,
-    this.caption,
+    required this.alternativeText,
+    required this.caption,
     required this.width,
     required this.height,
     required this.formats,
@@ -70,17 +134,17 @@ class Imagen {
     required this.mime,
     required this.size,
     required this.url,
-    this.previewUrl,
+    required this.previewUrl,
     required this.provider,
-    this.providerMetadata,
+    required this.providerMetadata,
     required this.createdAt,
     required this.updatedAt,
   });
 
   int id;
   String name;
-  String? alternativeText;
-  String? caption;
+  dynamic alternativeText;
+  dynamic caption;
   int width;
   int height;
   Formats formats;
@@ -143,34 +207,37 @@ class Imagen {
 class Formats {
   Formats({
     required this.thumbnail,
-    required this.medium,
     required this.small,
+    required this.large,
+    required this.medium,
   });
 
-  Thumbnail? thumbnail;
-  Thumbnail? medium;
-  Thumbnail? small;
+  Small thumbnail;
+  Small? small;
+  Small? large;
+  Small? medium;
 
   factory Formats.fromJson(String str) => Formats.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory Formats.fromMap(Map<String, dynamic> json) => Formats(
-        thumbnail: Thumbnail.fromMap(json["thumbnail"]),
-        medium:
-            json["medium"] == null ? null : Thumbnail.fromMap(json["medium"]),
-        small: json["small"] == null ? null : Thumbnail.fromMap(json["small"]),
+        thumbnail: Small.fromMap(json["thumbnail"]),
+        small: Small.fromMap(json["small"]),
+        large: json["large"] == null ? null : Small.fromMap(json["large"]),
+        medium: json["medium"] == null ? null : Small.fromMap(json["medium"]),
       );
 
   Map<String, dynamic> toMap() => {
-        "thumbnail": thumbnail!.toMap(),
-        "medium": medium == null ? null : medium!.toMap(),
-        "small": small == null ? null : small!.toMap(),
+        "thumbnail": thumbnail.toMap(),
+        "small": small!.toMap(),
+        "large": large!.toMap(),
+        "medium": medium!.toMap(),
       };
 }
 
-class Thumbnail {
-  Thumbnail({
+class Small {
+  Small({
     required this.name,
     required this.hash,
     required this.ext,
@@ -178,7 +245,7 @@ class Thumbnail {
     required this.width,
     required this.height,
     required this.size,
-    this.path,
+    required this.path,
     required this.url,
   });
 
@@ -192,11 +259,11 @@ class Thumbnail {
   dynamic path;
   String url;
 
-  factory Thumbnail.fromJson(String str) => Thumbnail.fromMap(json.decode(str));
+  factory Small.fromJson(String str) => Small.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Thumbnail.fromMap(Map<String, dynamic> json) => Thumbnail(
+  factory Small.fromMap(Map<String, dynamic> json) => Small(
         name: json["name"],
         hash: json["hash"],
         ext: json["ext"],
@@ -218,5 +285,49 @@ class Thumbnail {
         "size": size,
         "path": path,
         "url": url,
+      };
+}
+
+class Likee {
+  Likee({
+    required this.id,
+    required this.action,
+    required this.idUser,
+    required this.idMeme,
+    required this.publishedAt,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  int id;
+  int? action;
+  int idUser;
+  int idMeme;
+  DateTime publishedAt;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  factory Likee.fromJson(String str) => Likee.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory Likee.fromMap(Map<String, dynamic> json) => Likee(
+        id: json["id"],
+        action: json["action"],
+        idUser: json["id_user"],
+        idMeme: json["id_meme"],
+        publishedAt: DateTime.parse(json["published_at"]),
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
+
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "action": action,
+        "id_user": idUser,
+        "id_meme": idMeme,
+        "published_at": publishedAt.toIso8601String(),
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
       };
 }

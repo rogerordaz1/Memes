@@ -15,6 +15,11 @@ class LoginUsersPoriver extends ChangeNotifier {
   int iduser = 0;
   String token = '';
 
+  LoginUsersPoriver() {
+  
+    _leeriduser();
+  }
+
   Future<String?> loginUser(String correo, String password) async {
     final Map<String, dynamic> authData = {
       "identifier": correo,
@@ -37,7 +42,7 @@ class LoginUsersPoriver extends ChangeNotifier {
     final respuesta = UserResponse.fromJson(response.body);
     iduser = respuesta.user.id;
     token = respuesta.jwt;
-    print(iduser);
+    print("Este es el id el usuario Logueado" + iduser.toString());
 
     if (decodedResp.containsKey('jwt')) {
       await storage.write(key: 'token', value: decodedResp['jwt']);
@@ -80,5 +85,11 @@ class LoginUsersPoriver extends ChangeNotifier {
     await storage.delete(key: 'token');
     logueado = false;
     notifyListeners();
+  }
+
+  Future<int> _leeriduser() async {
+    iduser = int.parse((await storage.read(key: 'id_user') ?? ''));
+
+    return iduser;
   }
 }

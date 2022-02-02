@@ -34,7 +34,12 @@ class _PrincipalState extends State<Principal> {
         controller: scrollController,
         itemCount: memService.ondisplay.length,
         itemBuilder: (context, index) {
-          return CustomCard(image: memService.ondisplay[index]);
+          return CustomCard(
+            image: memService.ondisplay[index],
+            user: memService.user[index],
+            cantlikes: memService.likes[index],
+            idmeme: memService.idmeme[index],
+          );
         });
   }
 }
