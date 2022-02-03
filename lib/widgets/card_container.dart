@@ -1,10 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 import 'package:http/http.dart' as http;
-
 import 'package:like_button/like_button.dart';
 import 'package:localizacionversion2/models/now_response.dart';
 import 'package:flutter/rendering.dart';
@@ -34,6 +31,13 @@ class CustomCard extends StatefulWidget {
 class _CustomCardState extends State<CustomCard> {
   bool color = false;
   final storage = const FlutterSecureStorage();
+  String idlog = "";
+
+  @override
+  void initState() {
+    verificarusuariologueado();
+    super.initState();
+  }
 
   @override
   Widget build(
@@ -74,7 +78,7 @@ class _CustomCardState extends State<CustomCard> {
                 width: 30,
               ),
               FutureBuilder(
-                future: memService.verificarLiked(authService.iduser),
+                future: memService.verificarLiked(verificarusuariologueado()),
                 builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                   if (snapshot.data == true) {
                     return LikeButton(
@@ -164,5 +168,32 @@ class _CustomCardState extends State<CustomCard> {
       print(response.reasonPhrase);
       return false;
     }
+  }
+
+  Future<int> verificarusuariologueado() async {
+    String jwt = await readTokenFromStorage();
+    var headers = {'': '', 'Authorization': 'Bearer $jwt'};
+    var request =
+        http.Request('GET', Uri.parse('http://78.108.216.56:1338/users/me'));
+    request.body = '''''';
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      final respuesta = await response.stream.bytesToString();
+      final Map<String, dynamic> decodedResp = json.decode(respuesta);
+
+      idlog = decodedResp['id'].toString();
+      print("Joneeeeeee" "$idlog");
+
+      return decodedResp['id'];
+    } else {
+      return 0;
+    }
+  }
+
+  Future<String> readTokenFromStorage() async {
+    return await storage.read(key: 'token') ?? '';
   }
 }

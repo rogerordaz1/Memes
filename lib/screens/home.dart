@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:localizacionversion2/providers/login_users_provider.dart';
 import 'package:localizacionversion2/providers/ui_provider.dart';
 import 'package:localizacionversion2/screens/principal.dart';
@@ -16,8 +17,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final storage = const FlutterSecureStorage();
   late bool logueado;
   String? datos;
+
   @override
   void initState() {
     super.initState();

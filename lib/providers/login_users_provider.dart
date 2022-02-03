@@ -16,8 +16,7 @@ class LoginUsersPoriver extends ChangeNotifier {
   String token = '';
 
   LoginUsersPoriver() {
-  
-    _leeriduser();
+    // _leeriduser();
   }
 
   Future<String?> loginUser(String correo, String password) async {
@@ -87,9 +86,9 @@ class LoginUsersPoriver extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<int> _leeriduser() async {
-    iduser = int.parse((await storage.read(key: 'id_user') ?? ''));
+  //Future<int> _leeriduser() async {
+  //  iduser = int.parse((await storage.read(key: 'id_user') ?? ''));
 
-    return iduser;
-  }
+  ///   return iduser;
+//  }
 }
