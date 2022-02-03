@@ -15,9 +15,12 @@ class CustomCard extends StatefulWidget {
   final User user;
   final int cantlikes;
   final int idmeme;
+  final bool isLiked = false;
+  final int index;
 
   const CustomCard(
       {Key? key,
+      required this.index,
       required this.image,
       required this.user,
       required this.cantlikes,
@@ -78,7 +81,8 @@ class _CustomCardState extends State<CustomCard> {
                 width: 30,
               ),
               FutureBuilder(
-                future: memService.verificarLiked(verificarusuariologueado()),
+                future: memService.verificarLiked(
+                    verificarusuariologueado(), widget.index),
                 builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                   if (snapshot.data == true) {
                     return LikeButton(
@@ -89,14 +93,15 @@ class _CustomCardState extends State<CustomCard> {
                     return LikeButton(
                       isLiked: false,
                       likeCount: widget.cantlikes,
-                      onTap: (isLiked) => _agregarLikes(authService.iduser),
+                      onTap: (isLiked) =>
+                          _agregarLikes(verificarusuariologueado()),
                     );
                   }
                 },
               ),
               LikeButton(
                 likeCount: 50,
-                likeBuilder: (bool isLiked) {
+                likeBuilder: (isLiked) {
                   return Icon(
                     Icons.share,
                     color: isLiked ? Colors.deepPurpleAccent : Colors.grey,
@@ -105,7 +110,7 @@ class _CustomCardState extends State<CustomCard> {
                 },
               ),
               LikeButton(
-                likeBuilder: (bool isLiked) {
+                likeBuilder: (isLiked) {
                   return GestureDetector(
                     child: Icon(
                       Icons.downloading_sharp,
@@ -146,7 +151,7 @@ class _CustomCardState extends State<CustomCard> {
     });
   }
 
-  Future<bool> _agregarLikes(int idlogin) async {
+  Future<bool> _agregarLikes(Future<int> idlogin) async {
     var headers = {
       '': '',
       'Authorization':
@@ -155,8 +160,8 @@ class _CustomCardState extends State<CustomCard> {
     };
     var request =
         http.Request('POST', Uri.parse('http://78.108.216.56:1338/likes'));
-    request.body = json
-        .encode({"action": 1, "id_user": idlogin, "id_meme": widget.idmeme});
+    request.body = json.encode(
+        {"action": 1, "id_user": await idlogin, "id_meme": widget.idmeme});
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();

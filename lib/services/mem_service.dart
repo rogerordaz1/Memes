@@ -18,6 +18,8 @@ class MemService extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
   bool navegar = false;
   bool isliked = false;
+  int cont = 0;
+  List<dynamic> li = [];
 
   MemService() {
     getMemes();
@@ -29,6 +31,7 @@ class MemService extends ChangeNotifier {
     final url = Uri.http(_baseUrl, '/memes');
     final response = await http.get(url);
     final List<dynamic> decodedResp = json.decode(response.body);
+    li = decodedResp;
     return decodedResp;
   }
 
@@ -83,19 +86,19 @@ class MemService extends ChangeNotifier {
     }
   }
 
-  Future<bool> verificarLiked(Future<int> id) async {
-    isliked = false;
+  Future<bool> verificarLiked(Future<int> id, int index) async {
+    List<dynamic> decodedResp = li;
 
-    List<dynamic> decodedResp = await getResponse();
-
-    final Map<String, dynamic> resp = decodedResp[i];
+    final Map<String, dynamic> resp = decodedResp[index];
     final respuesta = Memes.fromMap(resp);
+    isliked = false;
     for (var j = 0; j < respuesta.likees.length; j++) {
       if (await id == respuesta.likees[j].idUser) {
         isliked = true;
       }
     }
-    i++;
+    cont++;
+    print('Este es el index ' "$index");
     return isliked;
   }
 }
