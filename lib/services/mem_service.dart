@@ -14,6 +14,7 @@ class MemService extends ChangeNotifier {
   List<User> user = [];
   List<int> idmeme = [];
   List<int> likes = [];
+  int i = 0;
   final storage = const FlutterSecureStorage();
   bool navegar = false;
   bool isliked = false;
@@ -82,17 +83,19 @@ class MemService extends ChangeNotifier {
     }
   }
 
-  Future<bool> verificarLiked(int id) async {
+  Future<bool> verificarLiked(Future<int> id) async {
+    isliked = false;
+
     List<dynamic> decodedResp = await getResponse();
-    for (var i = 0; i < decodedResp.length; i++) {
-      final Map<String, dynamic> resp = decodedResp[i];
-      final respuesta = Memes.fromMap(resp);
-      for (var j = 0; j < respuesta.likees.length; j++) {
-        if (id == respuesta.likees[j].id) {
-          isliked = true;
-        }
+
+    final Map<String, dynamic> resp = decodedResp[i];
+    final respuesta = Memes.fromMap(resp);
+    for (var j = 0; j < respuesta.likees.length; j++) {
+      if (await id == respuesta.likees[j].idUser) {
+        isliked = true;
       }
     }
+    i++;
     return isliked;
   }
 }
