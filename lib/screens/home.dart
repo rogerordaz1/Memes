@@ -82,6 +82,7 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     if (datos != "") {
                       loginUser.logout();
+                      Navigator.pushReplacementNamed(context, 'Login_page');
                     } else {
                       Navigator.pushReplacementNamed(context, 'Login_page');
                     }

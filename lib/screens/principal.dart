@@ -35,6 +35,7 @@ class _PrincipalState extends State<Principal> {
         itemCount: memService.ondisplay.length,
         itemBuilder: (context, index) {
           return CustomCard(
+            index: index,
             image: memService.ondisplay[index],
             user: memService.user[index],
             cantlikes: memService.likes[index],

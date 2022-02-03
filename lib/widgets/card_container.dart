@@ -15,13 +15,15 @@ class CustomCard extends StatefulWidget {
   final User user;
   final int cantlikes;
   final int idmeme;
+  final int index;
 
   const CustomCard(
       {Key? key,
       required this.image,
       required this.user,
       required this.cantlikes,
-      required this.idmeme})
+      required this.idmeme,
+      required this.index})
       : super(key: key);
 
   @override
@@ -32,12 +34,6 @@ class _CustomCardState extends State<CustomCard> {
   bool color = false;
   final storage = const FlutterSecureStorage();
   String idlog = "";
-
-  @override
-  void initState() {
-    verificarusuariologueado();
-    super.initState();
-  }
 
   @override
   Widget build(
@@ -78,7 +74,8 @@ class _CustomCardState extends State<CustomCard> {
                 width: 30,
               ),
               FutureBuilder(
-                future: memService.verificarLiked(verificarusuariologueado()),
+                future: memService.verificarLiked(
+                    verificarusuariologueado(), widget.index),
                 builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                   if (snapshot.data == true) {
                     return LikeButton(
@@ -89,7 +86,8 @@ class _CustomCardState extends State<CustomCard> {
                     return LikeButton(
                       isLiked: false,
                       likeCount: widget.cantlikes,
-                      onTap: (isLiked) => _agregarLikes(authService.iduser),
+                      onTap: (isLiked) =>
+                          _agregarLikes(verificarusuariologueado()),
                     );
                   }
                 },
@@ -146,17 +144,17 @@ class _CustomCardState extends State<CustomCard> {
     });
   }
 
-  Future<bool> _agregarLikes(int idlogin) async {
+  Future<bool> _agregarLikes(Future<int> idlogin) async {
+    String jwt = await readTokenFromStorage();
     var headers = {
       '': '',
-      'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjQzNDY0MTM4LCJleHAiOjE2NDYwNTYxMzh9.OQxsFv1JH4tFzpH0Nq3M-0aajgWhWRc70dH-zRZCl-s',
+      'Authorization': 'Bearer $jwt',
       'Content-Type': 'application/json'
     };
     var request =
         http.Request('POST', Uri.parse('http://78.108.216.56:1338/likes'));
-    request.body = json
-        .encode({"action": 1, "id_user": idlogin, "id_meme": widget.idmeme});
+    request.body = json.encode(
+        {"action": 1, "id_user": await idlogin, "id_meme": widget.idmeme});
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
