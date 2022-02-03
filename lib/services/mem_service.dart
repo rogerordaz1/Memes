@@ -20,6 +20,8 @@ class MemService extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
   bool navegar = false;
   bool isliked = false;
+  int cont = 0;
+  List<dynamic> li = [];
 
   MemService() {
     getMemes();
@@ -31,6 +33,7 @@ class MemService extends ChangeNotifier {
     final url = Uri.http(_baseUrl, '/memes');
     final response = await http.get(url);
     final List<dynamic> decodedResp = json.decode(response.body);
+    li = decodedResp;
     return decodedResp;
   }
 
@@ -88,45 +91,18 @@ class MemService extends ChangeNotifier {
   }
 
   Future<bool> verificarLiked(Future<int> id, int index) async {
-    String jwt = await readTokenFromStorage();
+    List<dynamic> decodedResp = li;
 
-    var headers = {'Authorization': 'Bearer $jwt'};
-    var request =
-        http.Request('GET', Uri.parse('http://78.108.216.56:1338/likes'));
-
-    request.headers.addAll(headers);
-
-    http.StreamedResponse response = await request.send();
-
-    final body = await response.stream.bytesToString();
-    final List<dynamic> decodedResp = json.decode(body);
+    final Map<String, dynamic> resp = decodedResp[index];
+    final respuesta = Memes.fromMap(resp);
     isliked = false;
-    for (var i = 0; i < decodedResp.length; i++) {
-      final Map<String, dynamic> resp = decodedResp[i];
-      final respuesta = LikesResponse.fromMap(resp);
-
-      print('la respuesta de los id es ' + respuesta.idUser.id.toString());
-
-      if (respuesta.idUser.id == await id) {
+    for (var j = 0; j < respuesta.likees.length; j++) {
+      if (await id == respuesta.likees[j].idUser) {
         isliked = true;
       }
     }
-
-    // if (response.statusCode == 200) {
-
-    //   print('JAvierrrr');
-    // } else {
-    //   print(response.reasonPhrase);
-    // }
-
-    // for (var j = 0; j < respuesta.likees.length; j++) {
-    //   print(respuesta.likees[j].idUser);
-    //   if (await id == respuesta.likees[j].idUser) {
-    //     isliked = true;
-    //     break;
-    //   }
-    // }
-    i++;
+    cont++;
+    print('Este es el index ' "$index");
     return isliked;
   }
 

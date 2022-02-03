@@ -17,14 +17,14 @@ class CustomCard extends StatefulWidget {
   final int idmeme;
   final int index;
 
-  const CustomCard(
-      {Key? key,
-      required this.image,
-      required this.user,
-      required this.cantlikes,
-      required this.idmeme,
-      required this.index})
-      : super(key: key);
+  const CustomCard({
+    Key? key,
+    required this.index,
+    required this.image,
+    required this.user,
+    required this.cantlikes,
+    required this.idmeme,
+  }) : super(key: key);
 
   @override
   State<CustomCard> createState() => _CustomCardState();
@@ -94,7 +94,7 @@ class _CustomCardState extends State<CustomCard> {
               ),
               LikeButton(
                 likeCount: 50,
-                likeBuilder: (bool isLiked) {
+                likeBuilder: (isLiked) {
                   return Icon(
                     Icons.share,
                     color: isLiked ? Colors.deepPurpleAccent : Colors.grey,
@@ -103,7 +103,7 @@ class _CustomCardState extends State<CustomCard> {
                 },
               ),
               LikeButton(
-                likeBuilder: (bool isLiked) {
+                likeBuilder: (isLiked) {
                   return GestureDetector(
                     child: Icon(
                       Icons.downloading_sharp,
