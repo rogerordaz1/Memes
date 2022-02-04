@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:localizacionversion2/models/now_response.dart';
 import 'package:localizacionversion2/providers/login_users_provider.dart';
-import 'package:localizacionversion2/models/likesresponse.dart';
 import 'package:provider/provider.dart';
 
 class MemService extends ChangeNotifier {
@@ -106,7 +105,47 @@ class MemService extends ChangeNotifier {
     return isliked;
   }
 
+  Future<bool> eliminarLike(Future<int> id, int index) async {
+    List<dynamic> decodedResp = li;
+    int idlike = 0;
+    bool dislike = true;
+
+    final Map<String, dynamic> resp = decodedResp[index];
+    final respuesta = Memes.fromMap(resp);
+    dislike = false;
+    for (var j = 0; j < respuesta.likees.length; j++) {
+      if (await id == respuesta.likees[j].idUser) {
+        idlike = respuesta.likees[j].id;
+        borrarlike(idlike);
+        dislike = false;
+      }
+    }
+
+    return dislike;
+  }
+
   readTokenFromStorage() async {
     return await storage.read(key: 'token') ?? '';
+  }
+
+  void borrarlike(int id) async {
+    String jwt = await readTokenFromStorage();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $jwt'
+    };
+    var request = http.Request(
+        'DELETE', Uri.parse('http://78.108.216.56:1338/likes/$id'));
+    request.body = '''''';
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+    } else {
+      print(response.reasonPhrase);
+    }
   }
 }

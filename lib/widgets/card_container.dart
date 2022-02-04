@@ -16,6 +16,7 @@ class CustomCard extends StatefulWidget {
   final int cantlikes;
   final int idmeme;
   final int index;
+  final bool isliked = false;
 
   const CustomCard({
     Key? key,
@@ -81,6 +82,8 @@ class _CustomCardState extends State<CustomCard> {
                     return LikeButton(
                       isLiked: true,
                       likeCount: widget.cantlikes,
+                      onTap: (isLiked) => memService.eliminarLike(
+                          verificarusuariologueado(), widget.index),
                     );
                   } else {
                     return LikeButton(
