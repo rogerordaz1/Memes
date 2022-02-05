@@ -89,6 +89,49 @@ class MemService extends ChangeNotifier {
     }
   }
 
+  Future<int> verificarusuariologueado() async {
+    String jwt = await readTokenFromStorage();
+    var headers = {'': '', 'Authorization': 'Bearer $jwt'};
+    var request =
+        http.Request('GET', Uri.parse('http://78.108.216.56:1338/users/me'));
+    request.body = '''''';
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      final respuesta = await response.stream.bytesToString();
+      final Map<String, dynamic> decodedResp = json.decode(respuesta);
+      return decodedResp['id'];
+    } else {
+      return 0;
+    }
+  }
+
+  Future<bool> agregarLikes(Future<int> idlogin, int idmeme) async {
+    String jwt = await readTokenFromStorage();
+    var headers = {
+      '': '',
+      'Authorization': 'Bearer $jwt',
+      'Content-Type': 'application/json'
+    };
+    var request =
+        http.Request('POST', Uri.parse('http://78.108.216.56:1338/likes'));
+    request.body =
+        json.encode({"action": 1, "id_user": await idlogin, "id_meme": idmeme});
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+      return true;
+    } else {
+      print(response.reasonPhrase);
+      return false;
+    }
+  }
+
   Future<bool> verificarLiked(Future<int> id, int index) async {
     List<dynamic> decodedResp = li;
 
